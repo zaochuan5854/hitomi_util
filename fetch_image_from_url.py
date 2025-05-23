@@ -71,13 +71,18 @@ def fetch_image_from_url(gallery_id: int, url: str, retry_num: int=5) -> bytes:
         retry = Retry(total=retry_num, backoff_factor=1, status_forcelist=[502, 503, 504])
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('https://', adapter)
-        response = session.get(url, headers=headers, timeout=(10, 30))
+        response = session.get(url, headers=headers, timeout=(5, 10))
         response.raise_for_status()
         return response.content
     
     except requests.HTTPError as e:
-        print('Failed to fetch image data')
+        print(f'Failed to fetch image data\nerror: {e}')
         raise e
+    except requests.ConnectionError as e:
+        print(f'Connection error occurred while fetching image data\nerror: {e}')
+        raise e
+    
+    
 
 def test():
     pass

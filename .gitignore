@@ -1,3 +1,5 @@
 __pycache__/*
 hitomi.la/*
 venv/*
+
+.python-version

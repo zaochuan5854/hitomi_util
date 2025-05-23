@@ -66,7 +66,7 @@ def save_all_image_data_from_id(gallery_id: int, gallery_info: GalleryInfo|None=
             write_image_data(image_data, save_path)
 
 
-def test(test_gallery_id: int=3062749):
+def test(test_gallery_id: int=2388652):
     save_all_image_data_from_id(gallery_id=test_gallery_id, save_dir='hitomi.la')
 
 if __name__ == "__main__":

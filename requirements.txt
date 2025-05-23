@@ -1,0 +1,10 @@
+certifi==2025.4.26
+charset-normalizer==3.4.2
+colorama==0.4.6
+idna==3.10
+python-dateutil==2.9.0.post0
+requests==2.32.3
+six==1.17.0
+tqdm==4.67.1
+ua-generator==2.0.6
+urllib3==2.4.0

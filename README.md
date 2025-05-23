@@ -18,9 +18,9 @@
 from hitomi_util import save_all_image_data_from_id
 
 # ダウンロードしたいギャラリーのIDを指定
-gallery_id_to_download = 3062749 # 例としてテスト用のIDを使用 [29]
+gallery_id_to_download = 2388652 # 例としてテスト用のIDを使用
 
-# 画像を保存するディレクトリを指定 (省略可能、指定しない場合はカレントディレクトリに保存) [18]
+# 画像を保存するディレクトリを指定 (省略可能、指定しない場合はカレントディレクトリに保存)
 save_directory = 'downloaded_galleries' # 例
 
 # 画像のダウンロードと保存を実行

@@ -175,8 +175,36 @@ def b_search(field: str, key: npt.NDArray[np.uint8], node: Node, galleries_index
 
     return b_search(field, key, get_node_at_address(field, node.subnode_addresses[where], galleries_index_version), galleries_index_version)
     
+def get_galleryids_from_data(data: NodeData, galleries_index_version: str) -> list[Any]: #基本的にはlist[np.int32]
+    url = f'https://ltn.gold-usergeneratedcontent.net/galleriesindex/galleries.{galleries_index_version}.data'
+    offset, length = data.offset, data.length
+    if ((length > 1e8) or (length <=  0)):
+        print(f'length: {length} is too long')
+        return []
+    inbuf = get_url_at_range(url, (int(offset), int(offset+length-1)))
+    if not (inbuf.any()):
+        return []
+    galleries: list[Any] = []
 
-def get_galleryids_for_query(query: str):
+    pos = 0
+    number_of_galleries = read_int_or_uint_N_big_endian_from_adarray8(inbuf, np.int32, pos)
+    pos += 32//8
+
+    expected_length = 4 + number_of_galleries * 4
+    if ((number_of_galleries > 1e7) or number_of_galleries <=0):
+        print(f'number_of_galleries: {number_of_galleries} is too long')
+        return []
+    elif (len(inbuf) != expected_length):
+        print(f'len(inbuf): {len(inbuf)} != expected_length: {expected_length}')
+        return []
+    
+    for _ in range(number_of_galleries):
+        galleries.append(read_int_or_uint_N_big_endian_from_adarray8(inbuf, np.int32, pos))
+        pos += 32//8
+
+    return galleries
+
+def get_galleryids_for_query(query: str) -> list[Any]:
     query_hashed = hashlib.sha256(query.encode()).digest()
     key = np.frombuffer(query_hashed[:4], dtype=np.uint8)
     field = 'galleries'
@@ -184,8 +212,18 @@ def get_galleryids_for_query(query: str):
     
     initinal_node = get_node_at_address(field, np.uint64(0), index_version)
     
-    ans = b_search(field, key, initinal_node, index_version)
+    data = b_search(field, key, initinal_node, index_version)
+    if (isinstance(data, bool) and not data):
+        print(f'No data found for query: {query}')
+        return []
+    elif (isinstance(data, bool) and data):
+        raise Exception('Unexpected boolean return value from b_search')
     
-    print(ans)
-    
-get_galleryids_for_query('homunculus')
+    return get_galleryids_from_data(data, index_version)
+
+def test():
+    ids = get_galleryids_for_query('aaaa')
+    print(ids)
+
+if __name__ == '__main__':
+    test()
